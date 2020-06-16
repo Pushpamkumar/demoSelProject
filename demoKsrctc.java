@@ -48,7 +48,7 @@ public class demoKsrctc {
 		}
 		input.sendKeys(Keys.ENTER);
 		
-		input = driver.findElement(By.id("toPlaceName"));//CHIKKABALLAPURA
+		input = driver.findElement(By.id("toPlaceName"));//CHIKKAMAGALURU
 		input.sendKeys("ch");
 		Thread.sleep(2000);
 		script = " return document.getElementById(\"toPlaceName\").value;";
@@ -65,9 +65,9 @@ public class demoKsrctc {
 		
 		//Date of Departure
 		driver.findElement(By.xpath("//input[@id='txtJourneyDate']")).click();;
-		String month = "[class='ui-datepicker-month']";//[class='ui-datepicker-title'] 
-		String next = "[data-handler='next']";//[class='ui-datepicker-header.ui-widget-header.ui-helper-clearfix.ui-corner-all'] 
-		while(!driver.findElement(By.cssSelector(month)).getText().contains("June")){
+		String month = "[class='ui-datepicker-month']"; 
+		String next = "[data-handler='next']";
+		while(!driver.findElement(By.cssSelector(month)).getText().contains("July")){
 			
 			driver.findElement(By.cssSelector(next)).click();
 		}
@@ -143,7 +143,6 @@ public class demoKsrctc {
 		
 		//giving passenger details
 		
-		//driver.findElement(By.xpath("//a[@data-target='#ForwardinPxInfoDv']")).click();
 		int passengerSeq=0;
 		while(passengerSeq<seatsReq){
 		driver.findElements(By.xpath("//input[@name='passengerName']")).get(passengerSeq).sendKeys("John Doe");
