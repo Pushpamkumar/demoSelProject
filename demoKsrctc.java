@@ -1,6 +1,9 @@
 package projects;
 
 import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.io.FileInputStream;
 import java.lang.*;
 
 import org.openqa.selenium.By;
@@ -20,7 +23,6 @@ public class demoKsrctc {
 	public void demo() throws Exception {
 		
 	
-		// TODO Auto-generated method stubs
 		System.setProperty("webdriver.chrome.driver", "C:\\Users\\pushpam\\Downloads\\Project\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
 		
@@ -28,19 +30,23 @@ public class demoKsrctc {
 		driver.get("https://ksrtc.in/oprs-web/guest/home.do");
 		Thread.sleep(2000);
 		
+		driver.manage().window().maximize();
+		
+		Properties prop = new Properties();
+		FileInputStream data = new FileInputStream("C:\\Users\\pushpam\\workspace\\projects\\src\\projects\\data.properties");
+		prop.load(data);
+		
+		
 		WebElement input = driver.findElement(By.id("fromPlaceName"));
-		input.sendKeys("ben");
+		input.sendKeys((prop.getProperty("inputSource")));
 		Thread.sleep(2000);
-		
-		//selenium cannot identify hidden element so we use javascript DOM(Document Object Model)
-		//To use javascript in java we use JavascriptExecutor
-		
+				
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		
 		String script = " return document.getElementById(\"fromPlaceName\").value;";
 		String text = (String) js.executeScript(script);
 		
-		while(!text.equalsIgnoreCase("BENGALURU")){
+		while(!text.equalsIgnoreCase((prop.getProperty("selectSource")))){
 			
 			input.sendKeys(Keys.ARROW_DOWN);
 			text = (String) js.executeScript(script);
@@ -48,12 +54,12 @@ public class demoKsrctc {
 		}
 		input.sendKeys(Keys.ENTER);
 		
-		input = driver.findElement(By.id("toPlaceName"));//CHIKKAMAGALURU
-		input.sendKeys("ch");
+		input = driver.findElement(By.id("toPlaceName"));
+		input.sendKeys((prop.getProperty("inputDest")));
 		Thread.sleep(2000);
 		script = " return document.getElementById(\"toPlaceName\").value;";
 		
-        while(!text.equalsIgnoreCase("CHIKKAMAGALURU")){
+        while(!text.equalsIgnoreCase((prop.getProperty("selectDest")))){	
 			
 			input.sendKeys(Keys.ARROW_DOWN);
 			text = (String) js.executeScript(script);
@@ -67,9 +73,10 @@ public class demoKsrctc {
 		driver.findElement(By.xpath("//input[@id='txtJourneyDate']")).click();;
 		String month = "[class='ui-datepicker-month']"; 
 		String next = "[data-handler='next']";
-		while(!driver.findElement(By.cssSelector(month)).getText().contains("July")){
+		while(!driver.findElement(By.cssSelector(month)).getText().contains((prop.getProperty("month")))){
 			
 			driver.findElement(By.cssSelector(next)).click();
+			
 		}
 		
 		 //	selecting date	
@@ -80,7 +87,7 @@ public class demoKsrctc {
 			
 			String datetext =  driver.findElements(By.xpath("//td[@data-handler='selectDay']")).get(i).getText();
 			
-			if(datetext.equalsIgnoreCase("16")){
+			if(datetext.equalsIgnoreCase((prop.getProperty("day")))){
 				
 				driver.findElements(By.xpath("//td[@data-handler='selectDay']")).get(i).click();
 				break;
@@ -115,7 +122,10 @@ public class demoKsrctc {
 			}
 					
 		}
-		driver.findElements(By.cssSelector(".btnSelectLO.select-service-btn")).get(j).click();
+		
+        driver.findElement(By.id("corover-close-btn")).click();
+    
+		driver.findElements(By.cssSelector("[class='select-service'] input[value='Select Seats']")).get(j).click();
 		
 		wt.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='tab-content-layout tab-content-berth']/div/ul/li[@class='availSeatClassS']")));
 		//selecting no of seats = 2
@@ -124,33 +134,35 @@ public class demoKsrctc {
 	    	       
 	    
 	    int seatsReq=0;
-		while(seatsReq<2){
+	 
+		while(seatsReq<Integer.parseInt(prop.getProperty("reqSeats"))){
 			availSeats.get(seatsReq).click();
 			seatsReq++;
 		}
 		
 		
 		
-		//selecting boarding point = KEMPEGOWDA
-		driver.findElement(By.xpath("//*[contains(@onclick,'KEMPEGOWDA')]")).click();
+		//selecting boarding point
 		
-		//selecting dropping point = CHIKKAMAGALURU 
-		driver.findElement(By.xpath("//*[contains(@onclick,'CHIKKAMAGALURU')]")).click();
+		driver.findElement(By.xpath(prop.getProperty("boardingPoint"))).click();
+		
+		//selecting dropping point
+		driver.findElement(By.xpath(prop.getProperty("droppingPoint"))).click();
 		
 		//giving customer details
-		driver.findElement(By.xpath("//input[@id='mobileNo']")).sendKeys("9876543210");
-		driver.findElement(By.xpath("//input[@id='email']")).sendKeys("johndoe@email.com");
+		driver.findElement(By.xpath("//input[@id='mobileNo']")).sendKeys(prop.getProperty("mobile"));
+		driver.findElement(By.xpath("//input[@id='email']")).sendKeys(prop.getProperty("email"));
 		
 		//giving passenger details
 		
 		int passengerSeq=0;
 		while(passengerSeq<seatsReq){
-		driver.findElements(By.xpath("//input[@name='passengerName']")).get(passengerSeq).sendKeys("John Doe");
+		driver.findElements(By.xpath("//input[@name='passengerName']")).get(passengerSeq).sendKeys(prop.getProperty("passengerName"));
 		// select name="genderCodeId"
 		Select s = new Select(driver.findElements(By.xpath("//select[@name='genderCodeId']")).get(passengerSeq));
-		s.selectByVisibleText("MALE");
+		s.selectByVisibleText(prop.getProperty("passengerGeneder"));
 		//input name="passengerAge"
-		driver.findElements(By.xpath("//input[@name='passengerAge']")).get(passengerSeq).sendKeys("22");
+		driver.findElements(By.xpath("//input[@name='passengerAge']")).get(passengerSeq).sendKeys(prop.getProperty("passengerAgee"));
 		passengerSeq++;
 	}
 		
